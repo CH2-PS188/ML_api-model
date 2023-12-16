@@ -1,30 +1,63 @@
-const tf = require('@tensorflow/tfjs');
 const fetch = require('node-fetch');
+const tf = require('@tensorflow/tfjs');
+const csv = require('csv-parser');
+const fs = require('fs');
 
 const getprediksi = async (req, res) => {
     try {
-        const { id_account } = req.params;
+        const { id_account, pendapatan } = req.params;
         const apiUrl = `https://backend-moneo-pyy3zhb4pa-et.a.run.app/${id_account}/detaillaporan`;
-        // Mengambil data dari API menggunakan fetch atau axios
         const response = await fetch(apiUrl);
-        // Jika menggunakan axios: const response = await axios.get(apiUrl);
+    
         if (response.ok) {
           const data = await response.json();
-          // Ambil hanya informasi total pemasukan dan pengeluaran
-            const { totalIncome, totalExpenses } = data.summary;
-            const totalPemasukanInt = parseInt(totalIncome.replace(/[^\d]/g, ''), 10);
-            // Mengubah total pengeluaran ke integer dan menghapus tanda + atau -
-            const totalPengeluaranInt = parseInt(totalExpenses.replace(/[^\d]/g, ''), 10);
-            res.json({totalPemasukanInt, totalPengeluaranInt});
-
-            //CODE DARI TEAM ML
-
+          const { totalIncome, totalExpenses } = data.summary;
+          const totalPemasukanInt = parseInt(totalIncome.replace(/[^\d]/g, ''), 10);
+          const totalPengeluaranInt = parseInt(totalExpenses.replace(/[^\d]/g, ''), 10);
+    
+          // Baca file CSV dan proses data untuk membandingkan dengan input pengguna
+          const hasilPrediksi = await processDataForComparison(totalPemasukanInt, totalPengeluaranInt, pendapatan);
+    
+          res.json({ hasilPrediksi });
         } else {
           throw new Error('Gagal mengambil data');
         }
       } catch (error) {
         res.status(500).json({ error: error.message });
       }
-}
+    };
+
+    async function processDataForComparison(totalIncome) {
+        return new Promise((resolve, reject) => {
+          const data = [];
+          fs.createReadStream('./src/data_training/Daily Household Transactions.csv')
+            .pipe(csv())
+            .on('data', (row) => {
+              const pendapatan = parseFloat(row.pendapatan);
+              const pengeluaran = parseFloat(row.pengeluaran);
+      
+              if (!isNaN(pendapatan) && !isNaN(pengeluaran)) {
+                data.push({ pendapatan, pengeluaran });
+              }
+            })
+            .on('end', () => {
+              const pendapatanTensor = tf.tensor2d(data.map(d => d.pendapatan), [data.length, 1]);
+              const pengeluaranTensor = tf.tensor2d(data.map(d => d.pengeluaran), [data.length, 1]);
+      
+              const model = tf.sequential();
+              model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
+              model.compile({ loss: 'meanSquaredError', optimizer: 'sgd' });
+      
+              model.fit(pendapatanTensor, pengeluaranTensor, { epochs: 10 })
+                .then(() => {
+                  const hasilPrediksi = model.predict(tf.tensor2d([[totalIncome]])).dataSync();
+                  resolve(hasilPrediksi);
+                })
+                .catch(err => reject(err));
+            });
+        });
+      }
+      
+
 
 module.exports = {getprediksi}
