@@ -1,5 +1,7 @@
 # API Documentation
 
+- **REST API Endpoint**: [comming soon]()
+
 ### Get Prediksi
 
 - **Method**: `GET`
