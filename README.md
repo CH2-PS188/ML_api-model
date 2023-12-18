@@ -12,5 +12,5 @@
 - ### Get Riwayat Prediksi
 
 - **Method**: `GET`
-- **Path**: `/:id_account/prediksi`
+- **Path**: `/:id_account/riwayatprediksi`
 - **Handler**: `getprediksi`
