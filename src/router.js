@@ -1,4 +1,4 @@
-const{getprediksi} = require("./handler.js")
+const{getprediksi,getAllRiwayat_prediksi} = require("./handler.js")
 
 const routes = [
     {
@@ -6,5 +6,11 @@ const routes = [
         path: "/:id_account/prediksi",
         handler: getprediksi,
       },
+      {
+        method: "GET",
+        path: "/:id_account/riwayatprediksi",
+        handler: getAllRiwayat_prediksi,
+      },
+      
 ]
 module.exports = {routes};
