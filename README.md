@@ -2,7 +2,7 @@
 
 - **REST API Endpoint**: [End poin](https://model-moneo-pyy3zhb4pa-et.a.run.app/)
 - **Documentasi figma**: [Figma](https://www.figma.com/file/I41CrUyCWdJ3KnH2yngDIz/Job-Desk-ML?type=whiteboard&node-id=0-1&t=BDrndohN3geExaRh-0)
-- **Documentasi google colab testing**: [https://www.figma.com/file/I41CrUyCWdJ3KnH2yngDIz/Job-Desk-ML?type=whiteboard&node-id=0-1&t=BDrndohN3geExaRh-0](https://colab.research.google.com/drive/1V58Lr4NL8wpdfSU-QcIbMlptPaL2LFFs?usp=sharing)
+- **Documentasi google colab testing**: [(https://colab.research.google.com/drive/1V58Lr4NL8wpdfSU-QcIbMlptPaL2LFFs?usp=sharing)](https://colab.research.google.com/drive/1V58Lr4NL8wpdfSU-QcIbMlptPaL2LFFs?usp=sharing)
 
 ### Get Prediksi 
 
